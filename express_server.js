@@ -36,20 +36,20 @@ app.get("/urls/new",(request,response) => {
 });
 
 app.get("/urls/:id", (request,response) => {
-  var longURL = urlDatabase[request.params.id];
+  let longURL = urlDatabase[request.params.id];
   response.render("urls_show", {
     shortURL: request.params.id,
     longURL: urlDatabase[request.params.id],
-  //  username: request.cookies["username"]
+    username: request.cookies["username"]
   });
 });
 app.get("/u/:shortURL",(request,response) => {
-  var shortURL = request.params.shortURL;
+  let shortURL = request.params.shortURL;
   response.redirect(urlDatabase[shortURL]);
 })
 
 app.post("/urls", (request,response) => {
-  var randomString = generateRandomString();
+  let randomString = generateRandomString();
   urlDatabase[randomString] = request.body.longURL
   response.redirect('/urls/'+randomString);
 });
@@ -62,8 +62,8 @@ response.redirect('/urls/');
 
 
 app.post("/urls/:id/update",(request,response) => {
-var updatedURL = request.body.updatedURL;
-var id = request.params.id;
+let updatedURL = request.body.updatedURL;
+let id = request.params.id;
 urlDatabase[id] = updatedURL;
 response.redirect('/urls');
 });
@@ -76,11 +76,13 @@ app.listen(PORT, () => {
 app.post("/login",(request,response) => {
 response.cookie('username',request.body.username);
 response.redirect("/urls");
-console.log(request.body.username);
 });
 
 
-app.post("/logout")
+app.post("/logout", (request,response) => {
+response.clearCookie('username');
+response.redirect("/urls");
+});
 
 // Generating random string
 
