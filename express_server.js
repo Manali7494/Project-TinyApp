@@ -3,7 +3,7 @@ var app = express();
 var PORT = process.env.PORT || 8080; // default port setup
 const bodyParser = require("body-parser");
 
-app.use(bodyParser.urlencoded({extenderd: true}));
+app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 
 var urlDatabase = {
@@ -37,13 +37,22 @@ app.get("/urls/:id", (request,response) => {
   });
 });
 
+app.post("/urls", (request,response) => {
+  console.log(request.body);
+  response.send("OK")
+});
+
 // Listening to port
 app.listen(PORT, () => {
   console.log(`Example app is listening to port ${PORT}!`);
 });
 
-/*
-for (var i in urlDatabase){
-console.log(i);
-console.log(urlDatabase[i]);
-}*/
+
+
+// Generating random string
+
+function generateRandomString(){
+
+return Math.random().toString(20).slice(2);
+
+}
