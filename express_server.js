@@ -48,6 +48,11 @@ app.post("/urls", (request,response) => {
   response.redirect('/urls/'+randomString);
 });
 
+app.post("/urls/:id/delete",(request,response) => {
+var shortURL = request.params.id;
+delete urlDatabase[shortURL];
+response.redirect('/urls/');
+});
 
 // Listening to port
 app.listen(PORT, () => {
