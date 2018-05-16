@@ -1,24 +1,49 @@
 
 <html lang="en">
-<head></head>
+<head>
+  <title> TinyApp</title>
+  <style type="text/css">
+  body{
+    tex-align: center;
+    margin: 20px;
+    font-size: 20px;
+  }
+  ul li{
+  list-style-type: none;
+  }
+  }
+  a: link{
+    color: black;
+  }
+  a:hover{
+    color:blue;
+  }
+  button:hover{
+    display: inline;
+    background-color: white;
+  }
+  input: hover{
+    background: white;
+  }
+
+  </style>
+</head>
 
 <body>
-<p>
+
+
 <% include ./partials/_header.ejs %>
-<ul>
+
 <% for (var url in urls) { %>
-<li><%= url%> : <%=urls[url]%></li>
-
+<%= url%> => <%=urls[url]%>
 <a href="/urls/<%=url%>">Edit</a>
-
 <form method = "POST" action = "/urls/<%=url%>/delete">
 <button value = "Delete"> Delete </button>
 </form>
 
 <%}%>
-</ul>
-
-<a href = "/urls/new"> <input type = "button" value = "Add new URL"></a>
+<br>
+<a href = "/urls/new"> <button value = "Add new URL">Add new URL </button></a>
 
 
 
