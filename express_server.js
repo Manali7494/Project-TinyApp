@@ -37,16 +37,16 @@ app.get("/urls/:id", (request,response) => {
     longURL: urlDatabase[request.params.id]
   });
 });
+app.get("/u/:shortURL",(request,response) => {
+  var shortURL = request.params.shortURL;
+  response.redirect(urlDatabase[shortURL]);
+})
 
 app.post("/urls", (request,response) => {
   var randomString = generateRandomString();
   urlDatabase[randomString] = request.body.longURL
-  response.redirect('/urls');
+  response.redirect('/urls/'+randomString);
 });
-
-app.get("/u/:shortURL",(request,respond) => {
-  respond.redirect(longURL);
-})
 
 
 // Listening to port
