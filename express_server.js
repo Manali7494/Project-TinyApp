@@ -15,17 +15,20 @@ var urlDatabase = {
 app.get("/", (request, response) => {
   response.end("Hello!");
 });
-app.get("/urls.json", (request, response) => {
-  response.json(urlDatabase); // .json ensures proper display on the page
-});
-app.get('/hello', (request,response) => {
-  response.end("<html><body>Hello <b>World</b></body></html>\n")
-});
+
 app.get("/urls", (request,response) => {
   response.render("urls_index",{
     urls: urlDatabase
   });
 })
+
+app.get("/urls.json", (request, response) => {
+  response.json(urlDatabase); // .json ensures proper display on the page
+});
+
+app.get("/urls/new",(request,response) => {
+  response.render("urls_new");
+});
 
 app.get("/urls/:id", (request,response) => {
   response.render("urls_show", {
