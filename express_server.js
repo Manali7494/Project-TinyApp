@@ -67,6 +67,12 @@ app.listen(PORT, () => {
   console.log(`Example app is listening to port ${PORT}!`);
 });
 
+app.post("/login",(request,response) => {
+var loginInfo = request.body.login;
+response.cookie('username',loginInfo);
+response.redirect("/urls");
+console.log(loginInfo);
+});
 
 
 // Generating random string
