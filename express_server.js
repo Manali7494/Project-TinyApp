@@ -54,6 +54,14 @@ delete urlDatabase[shortURL];
 response.redirect('/urls/');
 });
 
+
+app.post("/urls/:id/update",(request,response) => {
+var updatedURL = request.body.updatedURL;
+var id = request.params.id;
+urlDatabase[id] = updatedURL;
+response.redirect('/urls');
+});
+
 // Listening to port
 app.listen(PORT, () => {
   console.log(`Example app is listening to port ${PORT}!`);

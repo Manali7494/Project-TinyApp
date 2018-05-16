@@ -9,13 +9,13 @@
 <% for (var url in urls) { %>
 <li><%= url%> : <%=urls[url]%></li>
 
-Link: <a href="/urls/<%=url%>">Shortened_URL</a>
+<a href="/urls/<%=url%>">Edit</a>
+
 <form method = "POST" action = "/urls/<%=url%>/delete">
 <button value = "Delete"> Delete </button>
 </form>
+
 <%}%>
-
-
 </ul>
 
 <a href = "/urls/new"> <input type = "button" value = "Add new URL"></a>
