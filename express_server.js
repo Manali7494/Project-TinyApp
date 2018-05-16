@@ -40,9 +40,8 @@ app.get("/urls/:id", (request,response) => {
 
 app.post("/urls", (request,response) => {
   var randomString = generateRandomString();
-  //urlDatabase[randomString] = request.longURL
-  console.log(randomString);
-  response.send("your url database" + JSON.stringify(urlDatabase))
+  urlDatabase[randomString] = request.body.longURL
+  response.redirect('/urls');
 });
 
 app.get("/u/:shortURL",(request,respond) => {
