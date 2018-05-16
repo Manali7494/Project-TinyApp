@@ -54,6 +54,10 @@ app.post("/urls", (request,response) => {
   response.redirect('/urls/'+randomString);
 });
 
+app.get("/register", (request,response) =>{
+  response.render("register");
+});
+
 app.post("/urls/:id/delete",(request,response) => {
 var shortURL = request.params.id;
 delete urlDatabase[shortURL];
@@ -83,6 +87,9 @@ app.post("/logout", (request,response) => {
 response.clearCookie('username');
 response.redirect("/urls");
 });
+
+
+
 
 // Generating random string
 
