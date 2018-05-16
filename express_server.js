@@ -80,6 +80,8 @@ console.log(request.body.username);
 });
 
 
+app.post("/logout")
+
 // Generating random string
 
 function generateRandomString(){

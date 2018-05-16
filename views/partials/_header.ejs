@@ -27,13 +27,19 @@
 
 <h1> TinyApp </h1>
 </head>
-
-
 <body>
+<%if (!username){%>
   <form method = "POST" action="/login">
     <input type = "text" name = "username" placeholder= "Username">
-    <input type ="submit"> <%=username%>
+    <input type ="submit">
   </form>
+<%} else {%>
+Logged in as : <%= username %>
+<form method = "POST" action = "/logout">
+<button type="submit" value="logout"> Logout</button>
+</form>
+<% } %>
+<br>
+<hr>
+
 </body>
-
-
