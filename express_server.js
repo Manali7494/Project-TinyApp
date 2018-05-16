@@ -1,8 +1,10 @@
 var express = require("express");
 var app = express();
 var PORT = process.env.PORT || 8080; // default port setup
+var cookieParser = require('cookie-parser');
 const bodyParser = require("body-parser")
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(cookieParser())
 
 app.set("view engine", "ejs");
 
@@ -18,7 +20,8 @@ app.get("/", (request, response) => {
 
 app.get("/urls", (request,response) => {
   response.render("urls_index",{
-    urls: urlDatabase
+    urls: urlDatabase,
+    username: request.cookies["username"]
   });
 })
 
@@ -27,14 +30,17 @@ app.get("/urls.json", (request, response) => {
 });
 
 app.get("/urls/new",(request,response) => {
-  response.render("urls_new");
+  response.render("urls_new", {
+    username: request.cookies["username"]
+  });
 });
 
 app.get("/urls/:id", (request,response) => {
   var longURL = urlDatabase[request.params.id];
   response.render("urls_show", {
     shortURL: request.params.id,
-    longURL: urlDatabase[request.params.id]
+    longURL: urlDatabase[request.params.id],
+  //  username: request.cookies["username"]
   });
 });
 app.get("/u/:shortURL",(request,response) => {
@@ -68,10 +74,9 @@ app.listen(PORT, () => {
 });
 
 app.post("/login",(request,response) => {
-var loginInfo = request.body.login;
-response.cookie('username',loginInfo);
+response.cookie('username',request.body.username);
 response.redirect("/urls");
-console.log(loginInfo);
+console.log(request.body.username);
 });
 
 
