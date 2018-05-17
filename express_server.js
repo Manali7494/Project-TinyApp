@@ -8,12 +8,6 @@ app.use(cookieParser());
 app.set("view engine", "ejs");
 
 
-// Generating random string
-function generateRandomString(){
-  return Math.random().toString(20).slice(8);
-}
-
-
 
 // Initial database for urls and users
 const urlDatabase = {
@@ -34,6 +28,25 @@ const users = {
   }
 };
 
+// Generating random string
+function generateRandomString(){
+  return Math.random().toString(20).slice(8);
+}
+
+// Check registered email with database information
+function checkEmail(response, userEmail) {
+  for (var i in users){
+    if (userEmail === users[i].email) {
+      response.status(400).send('This email is already registered. Please register with another email address or login using existing email address');
+    }
+  }
+}
+
+function checkEmptyString(response, userEmail, userPassword){
+  if (userEmail === "" || userPassword === "" ){
+    response.status(400).send('Please enter a valid Username and Password');
+  }
+}
 
 // Login and Logout
 app.post("/login", (request, response) => {
@@ -54,10 +67,9 @@ app.post("/register", (request, response) =>{
   let userEmail = request.body.email;
   let userPassword = request.body.password;
   let userID = generateRandomString();
-  if (userEmail === "" || userPassword === "" ){
-    response.status(400);
-    response.send('400 - Bad request');
-  }
+  checkEmptyString(response, userEmail, userPassword);
+  checkEmail(response, userEmail);
+
   users[userID] = {
     id: userID,
     email: userEmail,
