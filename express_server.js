@@ -28,12 +28,22 @@ const users = {
   }
 };
 
-// Generating random string
+// Generates random string
 function generateRandomString(){
   return Math.random().toString(20).slice(8);
 }
 
-// Check registered email with database information
+// Validates user for login
+function validateUser(userID){
+  for (var i in users){
+    if (userID === users[i].id){
+      return users[i];
+
+    }
+  }
+}
+
+// Checks registered email with database information
 function checkEmail(response, userEmail) {
   for (var i in users){
     if (userEmail === users[i].email) {
@@ -42,6 +52,7 @@ function checkEmail(response, userEmail) {
   }
 }
 
+// Checks if registration information is empty
 function checkEmptyString(response, userEmail, userPassword){
   if (userEmail === "" || userPassword === "" ){
     response.status(400).send('Please enter a valid Username and Password');
@@ -49,6 +60,9 @@ function checkEmptyString(response, userEmail, userPassword){
 }
 
 // Login and Logout
+
+
+
 app.post("/login", (request, response) => {
   response.cookie('username', request.body.username);
   response.redirect("/urls");
@@ -69,7 +83,6 @@ app.post("/register", (request, response) =>{
   let userID = generateRandomString();
   checkEmptyString(response, userEmail, userPassword);
   checkEmail(response, userEmail);
-
   users[userID] = {
     id: userID,
     email: userEmail,
@@ -85,9 +98,12 @@ app.get("/", (request, response) => {
 });
 
 app.get("/urls", (request, response) => {
+  let userObject = validateUser('user2RandomID');
+  console.log(userObject);
   response.render("urls_index", {
     urls: urlDatabase,
-    username: request.cookies["username"]
+    user: userObject,
+    //username: request.cookies["username"]
   });
 });
 
@@ -99,10 +115,12 @@ app.get("/urls.json", (request, response) => {
 // Individual id url page and redirection
 app.get("/urls/:id", (request, response) => {
   let longURL = urlDatabase[request.params.id];
+  let userObject = validateUser('user2RandomID');
   response.render("urls_show", {
     shortURL: request.params.id,
     longURL: urlDatabase[request.params.id],
-    username: request.cookies["username"]
+    user: userObject,
+    //username: request.cookies["username"]
   });
 });
 app.get("/u/:shortURL", (request, response) => {
@@ -114,8 +132,10 @@ app.get("/u/:shortURL", (request, response) => {
 
 // Creating, modifying, and deleting URLs
 app.get("/urls/new", (request, response) => {
+  let userObject = validateUser('user2RandomID');
   response.render("urls_new", {
-    username: request.cookies["username"]
+    user: userObject,
+    //username: request.cookies["username"]
   });
 });
 
