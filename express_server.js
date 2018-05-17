@@ -8,10 +8,24 @@ app.use(cookieParser())
 
 app.set("view engine", "ejs");
 
-var urlDatabase = {
+const urlDatabase = {
   'b2xVn2': 'http://www.lighthouselabs.ca',
   '9s5m5xK': 'http://www.google.com'
 };
+
+const users = {
+  "userRandomID":{
+    id: "userRandomID",
+    email: "user@example.com",
+    password: "purple-monkey-dinosaur"
+  },
+  "user2RandomID":{
+    id: "user2RandomID",
+    email:"user2@example.com",
+    password:"dishwasher-funk"
+  }
+}
+
 
 // Identifies path and action
 app.get("/", (request, response) => {
@@ -72,6 +86,8 @@ urlDatabase[id] = updatedURL;
 response.redirect('/urls');
 });
 
+
+app.post("/register")
 // Listening to port
 app.listen(PORT, () => {
   console.log(`Example app is listening to port ${PORT}!`);

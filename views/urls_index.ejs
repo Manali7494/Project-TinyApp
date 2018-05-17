@@ -1,19 +1,30 @@
 
 <html lang="en">
-
+<div class = "container">
 <% include ./partials/_header.ejs %>
+<div class = "card">
 
 <% for (var url in urls) { %>
-<%= url%> => <%=urls[url]%>
-<a href="/urls/<%=url%>">Edit</a>
+<div class = "card-header">
+Shortened URL : <%= url%>
+</div>
+<div class="card-body">
+ <%=urls[url]%>
+</div>
+
 <form method = "POST" action = "/urls/<%=url%>/delete">
-<button value = "Delete"> Delete </button>
+<button type="button" class = "btn btn-outline-warning">
+<a href="/urls/<%=url%>">Edit</a>
+</button>
+<button type="submit" value = "Delete" class="btn btn-outline-danger"> Delete </button>
 </form>
 
 <%}%>
-<a href = "/urls/new"> <button value = "Add new URL">Add new URL </button></a>
 
 
+<a href = "/urls/new"> <button class="btn btn-outline-primary" value = "Add new URL">Add new URL </button></a>
+</div>
 
+<div>
 </body>
 </html>

@@ -1,17 +1,25 @@
 <html>
+<div class = "container">
   <% include ./partials/_header.ejs %>
   <body>
-  <p>
-  Full URL: <%=longURL%> <br>
-  Shortened Form :  <%=shortURL%> <br>
+  <div class = "card text-center">
+  <div class = "card-header">
+      Shortened Form :  <%=shortURL%> <br>
+    </div>
+   <div class="card-body">
   Link: <a href = <%=longURL%>>tinyapp.com/<%=shortURL%></a>
-  </p>
-
-  <form method = "POST" action = "/urls/<%=shortURL%>/update">
+  </div>
+  <div class="card-footer">
+  Full URL: <%=longURL%> <br>
+    <form method = "POST" action = "/urls/<%=shortURL%>/update">
   <input type = "text" name="updatedURL"placeholder = "http://">
-  <button value="Update"> Update </button>
+  <button class="btn btn-outline-success" value="Update"> Update </button>
   </form>
 
-  </body>
+  <button class = "btn btn-outline-primary"> <a href="/urls">Go Back</a></button>
 
+  </body>
+<div>
+    </div>
+  </div>
 </html>
