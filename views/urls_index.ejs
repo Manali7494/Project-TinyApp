@@ -2,8 +2,8 @@
 <html lang="en">
 <div class = "container">
 <% include ./partials/_header.ejs %>
-<div class = "card">
 
+<div class = "card">
 <% for (var url in urls) { %>
 <div class = "card-header">
 Shortened URL : <%= url%>
@@ -23,8 +23,10 @@ Shortened URL : <%= url%>
 
 
 <a href = "/urls/new"> <button class="btn btn-outline-primary" value = "Add new URL">Add new URL </button></a>
-</div>
 
+<a href = "/urls/register">Register</a>
+
+</div>
 <div>
 </body>
 </html>

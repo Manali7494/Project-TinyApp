@@ -11,7 +11,9 @@
   <form method = "POST" action="/login">
     <input type = "text" name = "username" placeholder= "Username">
     <input type ="submit" class="btn btn-info" value="Login">
+    Don't have an account? <a href="/register">Sign up</a>
   </form>
+
 <%} else {%>
 <form method = "POST" action = "/logout">
 Logged in as : <%= username %>

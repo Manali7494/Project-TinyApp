@@ -87,7 +87,18 @@ response.redirect('/urls');
 });
 
 
-app.post("/register")
+app.post("/register",(request,response) =>{
+  let userEmail = request.body.email;
+  let userPassword = request.body.password;
+  let userID = generateRandomString();
+  users[userID] = {
+    id: userID,
+    email: userEmail,
+    password: userPassword
+  }
+  response.cookie('user_id',userID);
+  response.redirect("/urls");
+});
 // Listening to port
 app.listen(PORT, () => {
   console.log(`Example app is listening to port ${PORT}!`);
