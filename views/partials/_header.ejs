@@ -4,22 +4,24 @@
 <div class = "container">
 <h1> TinyApp </h1>
 
-</head>
-<body>
-
-<%if (!username){%>
-  <form method = "POST" action="/login">
-    <input type = "text" name = "username" placeholder= "Username">
-    <input type ="submit" class="btn btn-info" value="Login">
+</html>
+<%if (userID === undefined){%>
+    Already have an account? <a href="/login"> Log In </a>
     Don't have an account? <a href="/register">Sign up</a>
-  </form>
-
 <%} else {%>
+
+You are currently logged in <%=user['email']%>
+
 <form method = "POST" action = "/logout">
-Logged in as : <%= username %>
+
 <button type="submit" class="btn btn-info">Logout</button>
 </form>
 <% } %>
+
+
+</head>
+<body>
+
 <hr>
 </div>
 </body>

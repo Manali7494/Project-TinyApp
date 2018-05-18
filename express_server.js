@@ -8,7 +8,6 @@ app.use(cookieParser());
 app.set("view engine", "ejs");
 
 
-
 // Initial database for urls and users
 const urlDatabase = {
   'b2xVn2': 'http://www.lighthouselabs.ca',
@@ -33,17 +32,37 @@ function generateRandomString(){
   return Math.random().toString(20).slice(8);
 }
 
-// Validates user for login
-function validateUser(userID){
+// Validates login Username and Password
+function validateUser(loginEmail){
   for (var i in users){
-    if (userID === users[i].id){
+    if (loginEmail === users[i].email){
       return users[i];
-
     }
   }
 }
 
-// Checks registered email with database information
+function checkPassword(usrObject, password, response){
+  if (usrObject.password === password){
+    return true;
+  } else{
+    response.status(403);
+    response.send("Password doesn't match the email address");
+  }
+}
+
+// Registration checks for empty strings and existing emails
+function checkEmptyString(response, userEmail, userPassword){
+  var result;
+  if (userEmail === "" || userPassword === "" ){
+    response.status(400).send('Please enter a valid Username and Password');
+    result = true;
+  }
+  else{
+    result = false;
+  }
+  return result;
+}
+
 function checkEmail(response, userEmail) {
   for (var i in users){
     if (userEmail === users[i].email) {
@@ -52,25 +71,29 @@ function checkEmail(response, userEmail) {
   }
 }
 
-// Checks if registration information is empty
-function checkEmptyString(response, userEmail, userPassword){
-  if (userEmail === "" || userPassword === "" ){
-    response.status(400).send('Please enter a valid Username and Password');
-  }
-}
-
 // Login and Logout
-
-
+app.get("/login", (request, response) => {
+  response.render("login");
+});
 
 app.post("/login", (request, response) => {
-  response.cookie('username', request.body.username);
-  response.redirect("/urls");
+  let userObject = validateUser(request.body.email);
+  if (userObject === undefined){
+    response.status(403);
+    response.send("User with that email can not be found");
+  } else{
+    if (checkPassword(userObject, request.body.password, response)){
+      let userID = userObject.id;
+      response.cookie('user_id', userID);
+      response.redirect('/urls');
+    }
+  }
+
 });
 
 app.post("/logout", (request, response) => {
-  response.clearCookie('username');
-  response.redirect("/urls");
+  response.clearCookie('user_id');
+  response.redirect('/urls/');
 });
 
 // User Registration
@@ -81,62 +104,47 @@ app.post("/register", (request, response) =>{
   let userEmail = request.body.email;
   let userPassword = request.body.password;
   let userID = generateRandomString();
-  checkEmptyString(response, userEmail, userPassword);
   checkEmail(response, userEmail);
-  users[userID] = {
-    id: userID,
-    email: userEmail,
-    password: userPassword
-  };
+  if (!checkEmptyString(response, userEmail, userPassword)){
+    users[userID] = {
+      id: userID,
+      email: userEmail,
+      password: userPassword
+    };
+  }
   response.cookie('user_id', userID);
   response.redirect("/urls");
 });
 
-// Welcome and URL lists page
-app.get("/", (request, response) => {
-  response.end("Hello!");
-});
-
+// Initate pages
 app.get("/urls", (request, response) => {
-  let userObject = validateUser('user2RandomID');
-  console.log(userObject);
-  response.render("urls_index", {
+  let usrID = request.cookies.user_id;
+  let usrObj = users[usrID];
+  let templateVars = {
     urls: urlDatabase,
-    user: userObject,
-    //username: request.cookies["username"]
-  });
-});
-
-app.get("/urls.json", (request, response) => {
-  response.json(urlDatabase);
+    user: usrObj,
+    userID: usrID
+  };
+  response.render("urls_index", templateVars);
 });
 
 
-// Individual id url page and redirection
-app.get("/urls/:id", (request, response) => {
-  let longURL = urlDatabase[request.params.id];
-  let userObject = validateUser('user2RandomID');
-  response.render("urls_show", {
-    shortURL: request.params.id,
-    longURL: urlDatabase[request.params.id],
-    user: userObject,
-    //username: request.cookies["username"]
-  });
-});
 app.get("/u/:shortURL", (request, response) => {
   let shortURL = request.params.shortURL;
   response.redirect(urlDatabase[shortURL]);
 });
 
 
-
 // Creating, modifying, and deleting URLs
-app.get("/urls/new", (request, response) => {
-  let userObject = validateUser('user2RandomID');
-  response.render("urls_new", {
-    user: userObject,
-    //username: request.cookies["username"]
-  });
+app.get("/urls/new/", (request, response) => {
+  let usrID = request.cookies.user_id;
+  let usrObj = users[usrID];
+  let templateVars = {
+    urls: urlDatabase,
+    user: usrObj,
+    userID: usrID
+  };
+  response.render("urls_new", templateVars);
 });
 
 app.post("/urls", (request, response) => {
@@ -158,6 +166,18 @@ app.post("/urls/:id/update", (request, response) => {
   response.redirect('/urls');
 });
 
+// Individual id url page and redirection
+app.get("/urls/:id", (request, response) => {
+  let usrID = request.cookies.user_id;
+  let usrObj = users[usrID];
+  templateVars = {
+    shortURL: request.params.id,
+    longURL: urlDatabase[request.params.id],
+    userID: usrID,
+    user: usrObj
+  };
+  response.render("urls_show", templateVars);
+});
 
 // Listening to port
 app.listen(PORT, () => {
