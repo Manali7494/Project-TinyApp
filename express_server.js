@@ -151,7 +151,7 @@ app.get("/urls", (request, response) => {
     };
     response.render("urls_index", templateVars);
   } else{
-    response.send('Please log in or Register');
+    response.redirect('/login');
   }
 });
 
