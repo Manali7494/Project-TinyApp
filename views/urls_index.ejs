@@ -1,26 +1,27 @@
 
 <html lang="en">
-<div class = "container">
+<div class = "container text-center">
 
   <% include ./partials/_header.ejs %>
 
   <div class = "card">
     <% for (var url of urls) {  %>
       <div class = "card-header">
-        <%=url['shortURL'] %>
+        Shortened URL: <%=url['shortURL'] %>
       </div>
     <div class = "card-body">
-      <%=url['link']%>
+      Full URL: <%=url['link']%>
       <a href="/urls/<%=url['shortURL']%>">
         <button class = "btn  btn-outline-primary">Edit</button>
       </a>
       <form method = "POST" action = "/urls/<%=url['shortURL']%>/delete">
+        <br>
         <button type="submit" value = "Delete" class="btn btn-outline-danger"> Delete </button>
       </form>
     </div>
 
 <%} %>
-  <a href = "/urls/new"> <button class="btn btn-outline-primary" value = "Add new URL">Add new URL </button></a>
+  <a href = "/urls/new"> <button class="btn btn-primary" value = "Add new URL">Add new URL </button></a>
 </div>
 </body>
 </html>
