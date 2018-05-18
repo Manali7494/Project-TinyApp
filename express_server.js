@@ -11,8 +11,12 @@ app.set("view engine", "ejs");
 
 // Initial database for urls and users
 const urlDatabase = {
-  'b2xVn2': 'http://www.lighthouselabs.ca',
-  '9s5m5xK': 'http://www.google.com'
+  'b2xVn2': {
+    link: 'http://www.lighthouselabs.ca',
+    userID: 'userRandomID'},
+  '9s5m5xK': {
+    link: 'http://www.google.com',
+    userID: 'user2RandomID'}
 };
 
 const users = {
@@ -158,7 +162,9 @@ app.get("/urls/new/", (request, response) => {
 
 app.post("/urls", (request, response) => {
   let randomString = generateRandomString();
-  urlDatabase[randomString] = request.body.longURL;
+  urlDatabase[randomString] = {
+    link: request.body.longURL
+  };
   response.redirect('/urls/' + randomString);
 });
 
@@ -171,7 +177,7 @@ app.post("/urls/:id/delete", (request, response) => {
 app.post("/urls/:id/update", (request, response) => {
   let updatedURL = request.body.updatedURL;
   let id = request.params.id;
-  urlDatabase[id] = updatedURL;
+  urlDatabase[id]['link'] = updatedURL;
   response.redirect('/urls');
 });
 
@@ -181,7 +187,7 @@ app.get("/urls/:id", (request, response) => {
   let usrObj = users[usrID];
   templateVars = {
     shortURL: request.params.id,
-    longURL: urlDatabase[request.params.id],
+    longURL: urlDatabase[request.params.id]['link'],
     userID: usrID,
     user: usrObj
   };
