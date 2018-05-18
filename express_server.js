@@ -163,7 +163,8 @@ app.get("/urls/new/", (request, response) => {
 app.post("/urls", (request, response) => {
   let randomString = generateRandomString();
   urlDatabase[randomString] = {
-    link: request.body.longURL
+    link: request.body.longURL,
+    userID: request.cookies.user_id
   };
   response.redirect('/urls/' + randomString);
 });
