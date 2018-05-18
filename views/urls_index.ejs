@@ -2,8 +2,8 @@
 <html lang="en">
 <div class = "container text-center">
 
-  <% include ./partials/_header.ejs %>
-
+<% include ./partials/_header.ejs %>
+<% if (userID !== undefined) {%>
   <div class = "card">
     <% for (var url of urls) {  %>
       <div class = "card-header">
@@ -19,9 +19,11 @@
         <button type="submit" value = "Delete" class="btn btn-outline-danger"> Delete </button>
       </form>
     </div>
-
 <%} %>
+
   <a href = "/urls/new"> <button class="btn btn-primary" value = "Add new URL">Add new URL </button></a>
+
+<%}%>
 </div>
 </body>
 </html>

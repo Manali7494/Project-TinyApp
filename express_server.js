@@ -79,7 +79,12 @@ function checkEmail(response, userEmail) {
 
 // Login and Logout
 app.get("/login", (request, response) => {
-  response.render("login");
+  let usrID = request.session.userid;
+  if (usrID !== undefined){
+    response.redirect("/urls");
+  } else{
+    response.render("login");
+  }
 });
 
 app.post("/login", (request, response) => {
@@ -99,12 +104,17 @@ app.post("/login", (request, response) => {
 
 app.post("/logout", (request, response) => {
   request.session = null;
-  response.redirect('/urls/');
+  response.redirect('/urls');
 });
 
 // User Registration
 app.get("/register", (request, response) =>{
-  response.render("register");
+  let usrID = request.session.userid;
+  if (usrID !== undefined){
+    response.redirect("/urls");
+  } else{
+    response.render("register");
+  }
 });
 app.post("/register", (request, response) =>{
   let userEmail = request.body.email;
@@ -137,28 +147,33 @@ function urlsForUser(userId){
 }
 
 // Initate pages
+
+app.get("/", (request, response) => {
+  let usrID = request.session.userid;
+  if (usrID !== undefined){
+    response.redirect("/urls");
+  } else{
+    response.redirect("/login");
+  }
+});
+
 app.get("/urls", (request, response) => {
   let usrID = request.session.userid;
   let usrObj = users[usrID];
   let usrSpecificURL = [];
-  if (usrID !== undefined){
-    var urlList = urlsForUser(usrID);
-
-    let templateVars = {
-      urls: urlList,
-      user: usrObj,
-      userID: usrID
-    };
-    response.render("urls_index", templateVars);
-  } else{
-    response.redirect('/login');
-  }
+  var urlList = urlsForUser(usrID);
+  let templateVars = {
+    urls: urlList,
+    user: usrObj,
+    userID: usrID
+  };
+  response.render("urls_index", templateVars);
 });
 
 
 app.get("/u/:shortURL", (request, response) => {
   let shortURL = request.params.shortURL;
-  response.redirect(urlDatabase[shortURL.slice(1)]['link']);
+  response.redirect(urlDatabase[shortURL]['link']);
 });
 
 
