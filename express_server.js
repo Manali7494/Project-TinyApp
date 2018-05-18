@@ -120,6 +120,7 @@ app.post("/register", (request, response) =>{
 
 // Initate pages
 app.get("/urls", (request, response) => {
+
   let usrID = request.cookies.user_id;
   let usrObj = users[usrID];
   let templateVars = {
@@ -127,7 +128,13 @@ app.get("/urls", (request, response) => {
     user: usrObj,
     userID: usrID
   };
-  response.render("urls_index", templateVars);
+
+  if (request.cookies.user_id !== undefined){
+    response.render("urls_index", templateVars);
+  }
+  else{
+    response.redirect("/login");
+  }
 });
 
 
@@ -185,9 +192,3 @@ app.get("/urls/:id", (request, response) => {
 app.listen(PORT, () => {
   console.log(`Example app is listening to port ${PORT}!`);
 });
-
-
-
-
-
-
