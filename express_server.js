@@ -3,6 +3,7 @@ var app = express();
 var PORT = process.env.PORT || 8080;
 var cookieParser = require('cookie-parser');
 const bodyParser = require("body-parser");
+const bcrypt = require('bcrypt');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 app.set("view engine", "ejs");
