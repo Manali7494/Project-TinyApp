@@ -170,16 +170,26 @@ app.post("/urls", (request, response) => {
 });
 
 app.post("/urls/:id/delete", (request, response) => {
-  var shortURL = request.params.id;
-  delete urlDatabase[shortURL];
-  response.redirect('/urls/');
+  let shortURL = request.params.id;
+  let userID = request.cookies.user_id;
+  if (urlDatabase[shortURL]['userID'] === userID){
+    delete urlDatabase[shortURL];
+    response.redirect('/urls/');
+  } else{
+    response.send('You do not have access to delete this link');
+  }
 });
 
 app.post("/urls/:id/update", (request, response) => {
   let updatedURL = request.body.updatedURL;
   let id = request.params.id;
-  urlDatabase[id]['link'] = updatedURL;
-  response.redirect('/urls');
+  let userID = request.cookies.user_id;
+  if (urlDatabase[id]['userID'] === userID){
+    urlDatabase[id]['link'] = updatedURL;
+    response.redirect('/urls');
+  } else{
+    response.send('You do not have access to edit this link');
+  }
 });
 
 // Individual id url page and redirection
