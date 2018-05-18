@@ -1,31 +1,26 @@
 
 <html lang="en">
 <div class = "container">
-<% include ./partials/_header.ejs %>
 
-<div class = "card">
-<% for (var url in urls) { %>
-<div class = "card-header">
-Shortened URL : <%= url%>
+  <% include ./partials/_header.ejs %>
+
+  <div class = "card">
+    <% for (var url of urls) {  %>
+      <div class = "card-header">
+        <%=url['shortURL'] %>
+      </div>
+    <div class = "card-body">
+      <%=url['link']%>
+      <a href="/urls/<%=url['shortURL']%>">
+        <button class = "btn  btn-outline-primary">Edit</button>
+      </a>
+      <form method = "POST" action = "/urls/<%=url['shortURL']%>/delete">
+        <button type="submit" value = "Delete" class="btn btn-outline-danger"> Delete </button>
+      </form>
+    </div>
+
+<%} %>
+  <a href = "/urls/new"> <button class="btn btn-outline-primary" value = "Add new URL">Add new URL </button></a>
 </div>
-<div class="card-body">
- <%=urls[url]['link']%>
-
-<a href="/urls/<%=url%>">
-<button class = "btn btn-outline-primary">Edit</button>
-</a>
-</div>
-
-
-
-<form method = "POST" action = "/urls/<%=url%>/delete">
-<button type="submit" value = "Delete" class="btn btn-outline-danger"> Delete </button>
-</form>
-<%}%>
-
-<a href = "/urls/new"> <button class="btn btn-outline-primary" value = "Add new URL">Add new URL </button></a>
-
-</div>
-<div>
 </body>
 </html>

@@ -121,26 +121,48 @@ app.post("/register", (request, response) =>{
   response.redirect("/urls");
 });
 
+function urlsForUser(userId){
+  let usrSpecificURL = [];
+  for (var i in urlDatabase){
+    if (urlDatabase[i]['userID'] === userId){
+      usrSpecificURL.push({
+        id: userId,
+        shortURL: i,
+        link: urlDatabase[i]['link']
+      });
+    }
+  }
+  return usrSpecificURL;
+}
 
 // Initate pages
 app.get("/urls", (request, response) => {
 
   let usrID = request.cookies.user_id;
   let usrObj = users[usrID];
-  let templateVars = {
-    urls: urlDatabase,
-    user: usrObj,
-    userID: usrID
-  };
+  let usrSpecificURL = [];
+  if (usrID !== undefined){
+    var urlList = urlsForUser(usrID);
 
-  response.render("urls_index", templateVars);
+    let templateVars = {
+      urls: urlList,
+      user: usrObj,
+      userID: usrID
+    };
+    console.log(urlList);
+    response.render("urls_index", templateVars);
+
+
+  } else{
+    response.send('Please log in/register');
+  }
 
 });
 
 
 app.get("/u/:shortURL", (request, response) => {
   let shortURL = request.params.shortURL;
-  response.redirect(urlDatabase[shortURL]);
+  response.redirect(urlDatabase[shortURL.slice(1)]['link']);
 });
 
 
@@ -196,13 +218,22 @@ app.post("/urls/:id/update", (request, response) => {
 app.get("/urls/:id", (request, response) => {
   let usrID = request.cookies.user_id;
   let usrObj = users[usrID];
+  let shortURL = request.params.id;
   templateVars = {
-    shortURL: request.params.id,
+    shortURL: shortURL,
     longURL: urlDatabase[request.params.id]['link'],
     userID: usrID,
     user: usrObj
   };
-  response.render("urls_show", templateVars);
+
+  if (usrID === undefined){
+    response.send('Please log in or register');
+  } else if (urlDatabase[shortURL]['userID'] === usrID){
+    response.render("urls_show", templateVars);
+  } else{
+    response.send('You can not access this link. Please create and edit your own links');
+  }
+
 });
 
 // Listening to port
