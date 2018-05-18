@@ -129,12 +129,8 @@ app.get("/urls", (request, response) => {
     userID: usrID
   };
 
-  if (request.cookies.user_id !== undefined){
-    response.render("urls_index", templateVars);
-  }
-  else{
-    response.redirect("/login");
-  }
+  response.render("urls_index", templateVars);
+
 });
 
 
@@ -153,7 +149,11 @@ app.get("/urls/new/", (request, response) => {
     user: usrObj,
     userID: usrID
   };
-  response.render("urls_new", templateVars);
+  if (usrID !== undefined){
+    response.render("urls_new", templateVars);
+  } else{
+    response.redirect("/login");
+  }
 });
 
 app.post("/urls", (request, response) => {
