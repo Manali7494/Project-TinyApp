@@ -1,13 +1,14 @@
 var express = require("express");
 var app = express();
 var PORT = process.env.PORT || 8080;
-var cookieParser = require('cookie-parser');
 const bodyParser = require("body-parser");
 const bcrypt = require('bcryptjs');
+const cookieSession = require('cookie-session');
 app.use(bodyParser.urlencoded({extended: true}));
-app.use(cookieParser());
+app.use(cookieSession({
+  secret: 'userID'
+}));
 app.set("view engine", "ejs");
-
 
 // Initial database for urls and users
 const urlDatabase = {
@@ -89,7 +90,7 @@ app.post("/login", (request, response) => {
   } else{
     if (checkPassword(userObject, request.body.password, response)){
       let userID = userObject.id;
-      response.cookie('user_id', userID);
+      request.session["userid"] = userID;
       response.redirect('/urls');
     }
   }
@@ -97,7 +98,7 @@ app.post("/login", (request, response) => {
 });
 
 app.post("/logout", (request, response) => {
-  response.clearCookie('user_id');
+  request.session = null;
   response.redirect('/urls/');
 });
 
@@ -117,7 +118,7 @@ app.post("/register", (request, response) =>{
       password: bcrypt.hashSync(userPassword, 10)
     };
   }
-  response.cookie('user_id', userID);
+  request.session['userid'] = userID;
   response.redirect("/urls");
 });
 
@@ -137,8 +138,7 @@ function urlsForUser(userId){
 
 // Initate pages
 app.get("/urls", (request, response) => {
-
-  let usrID = request.cookies.user_id;
+  let usrID = request.session.userid;
   let usrObj = users[usrID];
   let usrSpecificURL = [];
   if (usrID !== undefined){
@@ -149,14 +149,10 @@ app.get("/urls", (request, response) => {
       user: usrObj,
       userID: usrID
     };
-    console.log(urlList);
     response.render("urls_index", templateVars);
-
-
   } else{
-    response.send('Please log in/register');
+    response.send('Please log in or Register');
   }
-
 });
 
 
@@ -168,7 +164,7 @@ app.get("/u/:shortURL", (request, response) => {
 
 // Creating, modifying, and deleting URLs
 app.get("/urls/new/", (request, response) => {
-  let usrID = request.cookies.user_id;
+  let usrID = request.session.userid;
   let usrObj = users[usrID];
   let templateVars = {
     urls: urlDatabase,
@@ -186,14 +182,14 @@ app.post("/urls", (request, response) => {
   let randomString = generateRandomString();
   urlDatabase[randomString] = {
     link: request.body.longURL,
-    userID: request.cookies.user_id
+    userID: request.session.userid
   };
   response.redirect('/urls/' + randomString);
 });
 
 app.post("/urls/:id/delete", (request, response) => {
   let shortURL = request.params.id;
-  let userID = request.cookies.user_id;
+  let userID = request.session.userid;
   if (urlDatabase[shortURL]['userID'] === userID){
     delete urlDatabase[shortURL];
     response.redirect('/urls/');
@@ -205,7 +201,7 @@ app.post("/urls/:id/delete", (request, response) => {
 app.post("/urls/:id/update", (request, response) => {
   let updatedURL = request.body.updatedURL;
   let id = request.params.id;
-  let userID = request.cookies.user_id;
+  let userID = request.session.userid;
   if (urlDatabase[id]['userID'] === userID){
     urlDatabase[id]['link'] = updatedURL;
     response.redirect('/urls');
@@ -216,7 +212,7 @@ app.post("/urls/:id/update", (request, response) => {
 
 // Individual id url page and redirection
 app.get("/urls/:id", (request, response) => {
-  let usrID = request.cookies.user_id;
+  let usrID = request.session.userid;
   let usrObj = users[usrID];
   let shortURL = request.params.id;
   templateVars = {
