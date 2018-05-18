@@ -3,7 +3,7 @@ var app = express();
 var PORT = process.env.PORT || 8080;
 var cookieParser = require('cookie-parser');
 const bodyParser = require("body-parser");
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 app.set("view engine", "ejs");
@@ -19,12 +19,12 @@ const users = {
   "userRandomID": {
     id: "userRandomID",
     email: "user@example.com",
-    password: "purple-monkey-dinosaur"
+    password: bcrypt.hashSync("purple-monkey-dinosaur", 10)
   },
   "user2RandomID": {
     id: "user2RandomID",
     email: "user2@example.com",
-    password: "dishwasher-funk"
+    password: bcrypt.hashSync("dishwasher-funk", 10)
   }
 };
 
@@ -43,7 +43,8 @@ function validateUser(loginEmail){
 }
 
 function checkPassword(usrObject, password, response){
-  if (usrObject.password === password){
+  let compare = bcrypt.compareSync(password, usrObject.password);
+  if (compare === true){
     return true;
   } else{
     response.status(403);
@@ -57,8 +58,7 @@ function checkEmptyString(response, userEmail, userPassword){
   if (userEmail === "" || userPassword === "" ){
     response.status(400).send('Please enter a valid Username and Password');
     result = true;
-  }
-  else{
+  } else{
     result = false;
   }
   return result;
@@ -110,12 +110,13 @@ app.post("/register", (request, response) =>{
     users[userID] = {
       id: userID,
       email: userEmail,
-      password: userPassword
+      password: bcrypt.hashSync(userPassword, 10)
     };
   }
   response.cookie('user_id', userID);
   response.redirect("/urls");
 });
+
 
 // Initate pages
 app.get("/urls", (request, response) => {
